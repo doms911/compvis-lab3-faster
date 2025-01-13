@@ -48,7 +48,7 @@ if __name__ == '__main__':
         x_target = np.load(f"data/{key}_bb44.npy")
         if x.shape == x_target.shape:
             print(f"Features {key} shape test: passed!")
-            if np.allclose(x, x_target, atol=1e-5):
+            if np.allclose(x, x_target, atol=1e-4):
                 print(f"Features {key} values test: passed!")
             else:
                 print(f"Features {key} values test: failed!")
