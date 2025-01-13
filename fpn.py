@@ -41,7 +41,7 @@ class FeaturePyramidNetwork(nn.Module):
         # from the backbone labeled with keys "res2", "res3", "res4" and "res5".
         # Be careful with the order of the feature maps.
         # Index 0 in self.blend_convs and self.channel_projections corresponds
-        # tp the finest level of the pyramid, i.e. operates on the features "res2"
+        # to the finest level of the pyramid, i.e. operates on the features "res2"
         # and computes output features "fpn2".
         # Similarly, layers at the end of the list correspond to the coarsest level
         # of the pyramid, i.e. features "res5/fpn5".
@@ -50,7 +50,26 @@ class FeaturePyramidNetwork(nn.Module):
         # Use F.interpolate with mode "nearest" to upsample the features.
         # YOUR CODE HERE
 
+        chn_proj_res5 = self.channel_projections[3](x[self.input_keys_list[3]])
+        fpn5 = self.blend_convs[3](chn_proj_res5)
+        out['fpn5'] = fpn5
 
+        fpn_pool = nn.MaxPool2d(kernel_size=1, stride=2)(fpn5)
+        out['fpn_pool'] = fpn_pool
+
+        chn_proj_res4 = self.channel_projections[2](x[self.input_keys_list[2]])
+        sum_res4 = chn_proj_res4 + F.interpolate(chn_proj_res5, size=chn_proj_res4.shape[-2:], mode='nearest')
+        fpn4 = self.blend_convs[2](sum_res4)
+        out['fpn4'] = fpn4
+
+        chn_proj_res3 = self.channel_projections[1](x[self.input_keys_list[1]])
+        sum_res3 = chn_proj_res3 + F.interpolate(sum_res4, size=chn_proj_res3.shape[-2:], mode='nearest')
+        fpn3 = self.blend_convs[1](sum_res3)
+        out['fpn3'] = fpn3
+
+        chn_proj_res2 = self.channel_projections[0](x[self.input_keys_list[0]])
+        fpn2 = self.blend_convs[0](chn_proj_res2 + F.interpolate(sum_res3, size=chn_proj_res2.shape[-2:], mode='nearest'))
+        out['fpn2'] = fpn2
 
         # Rest of the code expects a dictionary with properly ordered keys.
         ordered_out = OrderedDict()

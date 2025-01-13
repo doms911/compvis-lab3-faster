@@ -1,4 +1,5 @@
 import math
+import numpy as np
 import torch
 import torch.nn as nn
 
@@ -11,37 +12,37 @@ def normalize_img(img, image_mean, image_std):
     img = (img - image_mean) / image_std
     return img.permute(2, 0, 1)
 
-#
-# class ConvNormActBlock(torch.nn.Sequential):
-#     def __init__(
-#         self,
-#         in_channels,
-#         out_channels,
-#         kernel_size,
-#         stride=1,
-#         norm_layer=None,
-#         activation_layer=None,
-#     ):
-#         super().__init__()
-#         # padding = # YOUR CODE HERE
-#         bias = norm_layer is None
-#         self.append(
-#             nn.Conv2d(
-#                 # YOUR CODE HERE
-#                 in_channels=,
-#                 out_channels=,
-#                 kernel_size=,
-#                 padding=,
-#                 stride=,
-#                 bias=bias,
-#             )
-#         )
-#         if norm_layer is not None:
-#             self.append(norm_layer(out_channels))
-#         if activation_layer is not None:
-#             self.append(activation_layer())
-#
-#
+
+class ConvNormActBlock(torch.nn.Sequential):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size,
+        stride=1,
+        norm_layer=None,
+        activation_layer=None,
+    ):
+        super().__init__()
+        padding = (kernel_size - 1) // 2
+        bias = norm_layer is None
+        self.append(
+            nn.Conv2d(
+                # YOUR CODE HERE
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=kernel_size,
+                padding=padding,
+                stride=stride,
+                bias=bias,
+            )
+        )
+        if norm_layer is not None:
+            self.append(norm_layer(out_channels))
+        if activation_layer is not None:
+            self.append(activation_layer())
+
+
 # def decode_boxes(rel_codes, boxes, weights=(1.0, 1.0, 1.0, 1.0), bbox_xform_clip=math.log(1000.0 / 16)):
 #     """
 #     Apply predicted bounding-box regression deltas to given roi boxes.
