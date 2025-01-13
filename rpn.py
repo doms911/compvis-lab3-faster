@@ -27,13 +27,13 @@ class RPNHead(nn.Module):
         self.conv = nn.Sequential(*convs)
         self.cls_logits = nn.Conv2d(
             in_channels,
-            out_channels= #YOUR CODE HERE,
+            out_channels= num_anchors_per_location * 1,
             kernel_size=1,
             stride=1
         )
         self.bbox_pred = nn.Conv2d(
             in_channels,
-            out_channels= #YOUR CODE HERE,
+            out_channels= num_anchors_per_location * 4,
             kernel_size=1,
             stride=1
         )
