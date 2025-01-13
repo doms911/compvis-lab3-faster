@@ -38,6 +38,9 @@ class TwoMLPHead(nn.Module):
         after each layer.
         """
         # YOUR CODE HERE
+        x = x.flatten(start_dim=1)
+        x = F.relu(self.fc6(x))
+        x = F.relu(self.fc7(x))
         return x
 
 
@@ -55,11 +58,11 @@ class FastRCNNPredictor(nn.Module):
         super().__init__()
         self.cls_score = nn.Linear(
             in_channels,
-            # YOUR CODE HERE
+            num_classes
         )
         self.bbox_pred = nn.Linear(
             in_channels,
-            # YOUR CODE HERE
+            num_classes * 4
         )
 
     def forward(self, x):

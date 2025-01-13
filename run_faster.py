@@ -1,7 +1,9 @@
+import cv2
 import matplotlib
 import torch
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import torchvision
+from keras.src.utils.summary_utils import bold_text
 
 from faster import FasterRCNNwithFPN
 from fpn import FeaturePyramidNetwork
@@ -53,6 +55,22 @@ if __name__ == '__main__':
     categories = _COCO_CATEGORIES
     colormap = generate_colormap(len(categories))
     boxes, scores, labels = model(img_pth)
+    draw = ImageDraw.Draw(img)
     for box, label, score in zip(boxes, labels, scores):
-        # YOUR CODE HERE
-        pass
+        if score >= 0.95:
+            x1, y1, x2, y2 = map(int, box)
+            color = tuple(c for c in colormap[label])
+            label_text = f"{categories[label]}: {score:.1%}"
+
+            # Bounding box
+            draw.rectangle([x1, y1, x2, y2], outline=color, width=3)
+
+            # Text
+            font = ImageFont.load_default(size=24)
+            text_bbox = draw.textbbox((x1, y1), label_text, font=font)
+            text_width = text_bbox[2] - text_bbox[0]
+            text_height = text_bbox[3] - text_bbox[1]
+            draw.text((x1 + 5, y1 + 2), label_text, fill=color, font=font)
+
+    img.show()
+    img.save("detection_bb44.png")
