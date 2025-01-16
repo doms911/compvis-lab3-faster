@@ -64,10 +64,7 @@ def decode_boxes(rel_codes, boxes, weights=(1.0, 1.0, 1.0, 1.0), bbox_xform_clip
     tw = torch.clamp(tw, max=bbox_xform_clip)
     th = torch.clamp(th, max=bbox_xform_clip)
 
-
     boxes = boxes.to(rel_codes.dtype)
-
-    print(boxes)
 
     # YOUR CODE HERE
     widths = boxes[:, 2] - boxes[:, 0]
